@@ -1,0 +1,10 @@
+campaignSharingRules
+documents
+email
+escalationRules
+labels
+leadSharingRules
+networks
+siteDotComSites
+sites
+synonymDictionaries
