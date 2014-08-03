@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns:sf="antlib:com.salesforce" basedir="." default="test" name="Sample usage of Salesforce Ant tasks">
+
+    <property file="build.properties"/>
+    <property environment="env"/>
+                                
+                <target name="proxy"> 
+                <property name="proxy.host" value="cinproxy1.glb.comfin.gtm.ge.com"/> 
+				<property name="proxy.port" value="80"/>                 
+                <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"/> 
+                </target>
+    <!-- Test out deploy and retrieve verbs for package 'mypkg'depends="proxy"-->
+    <target name="retrieve">
+	<!--<target name="retrieve">-->
+      <!-- Upload the contents of the "mypkg" package -->
+      <!--sf:deploy username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" maxPoll="${sf.maxPoll}" proxy="proxy" deployRoot="mypkg"/-->
+      <!-- Retrieve the contents into another directory -->
+      <sf:retrieve maxPoll="${sf.maxPoll}" password="${sf.password}" retrieveTarget="retrieve" serverurl="${sf.serverurl}" unpackaged="retrieve/package.xml" username="${sf.username}"/>
+    </target>
+	
+	<target name="retrieve1">
+	<!--<target name="retrieve">-->
+      <!-- Upload the contents of the "mypkg" package -->
+      <!--sf:deploy username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" maxPoll="${sf.maxPoll}" proxy="proxy" deployRoot="mypkg"/-->
+      <!-- Retrieve the contents into another directory -->
+      <sf:retrieve maxPoll="${sf.maxPoll}" password="${sf.password}" retrieveTarget="retrieve1" serverurl="${sf.serverurl}" unpackaged="retrieve1/package.xml" username="${sf.username}"/>
+    </target>
+	 <target name="FullData">
+	 <sf:retrieve maxPoll="${sf.maxPoll}" password="${sf.password}" retrieveTarget="FullData" serverurl="${sf.serverurl}" unpackaged="FullData/package.xml" username="${sf.username}"/>
+    </target>
+
+    <!-- Retrieve an unpackaged set of metadata from your org -->
+    <!-- The file unpackaged/package.xml lists what is to be retrieved -->
+      <target name="upload">
+      <!-- Upload the contents of the "mypkg" package -->
+      <sf:deploy checkOnly="true" deployRoot="upload" maxPoll="${sf.maxPoll}" password="${sf.password}" runAllTests="false" serverurl="${sf.serverurl}" username="${sf.username}"/>     
+    </target> 
+
+    <!-- Retrieve all the items of a particular metadata type -->
+    <target name="bulkRetrieve">
+      <sf:bulkRetrieve maxPoll="${sf.maxPoll}" metadataType="${sf.metadataType}" password="${sf.password}" retrieveTarget="retrieveUnpackaged" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+
+    <!-- Retrieve metadata for all the packages specified under packageNames -->
+    <target name="retrievePkg">
+      <sf:retrieve maxPoll="${sf.maxPoll}" packageNames="${sf.pkgName}" password="${sf.password}" retrieveTarget="retrieveOutput" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+
+    <!-- Deploy the unpackaged set of metadata retrieved with retrieveUnpackaged -->
+    <target name="deployUnpackaged">
+      <sf:deploy deployRoot="retrieveUnpackaged" maxPoll="${sf.maxPoll}" password="${sf.password}" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+
+    <!-- Deploy a zip of metadata files to the org -->
+    <target name="deployZip">
+      <sf:deploy maxPoll="${sf.maxPoll}" password="${sf.password}" pollWaitMillis="1000" serverurl="${sf.serverurl}" username="${sf.username}" zipFile="${sf.zipFile}"/>
+    </target>
+
+    <!-- Shows deploying code & running tests for code in directory -->
+    <target name="deployCode">
+      <!-- Upload the contents of the "codepkg" directory, running the tests for just 1 class -->
+      <sf:deploy deployRoot="codepkg" maxPoll="${sf.maxPoll}" password="${sf.password}" serverurl="${sf.serverurl}" username="${sf.username}">
+        <runTest>SampleDeployClass</runTest>
+      </sf:deploy>
+    </target>
+
+    <!-- Shows removing code; only succeeds if done after deployCode -->
+    <target depends="proxy" name="undeployCode">
+      <sf:deploy deployRoot="removecodepkg" maxPoll="${sf.maxPoll}" password="${sf.password}" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+
+    <!-- Shows retrieving code; only succeeds if done after deployCode -->
+    <target depends="proxy" name="retrieveCode">
+      <!-- Retrieve the contents listed in the file codepkg/package.xml into the codepkg directory -->
+      <sf:retrieve maxPoll="${sf.maxPoll}" password="${sf.password}" retrieveTarget="codepkg" serverurl="${sf.serverurl}" unpackaged="codepkg/package.xml" username="${sf.username}"/>
+    </target>
+
+    <!-- Shows deploying code, running all tests, and running tests (1 of which fails), and logging. -->
+    <target name="deployCodeFailingTest">
+      <!-- Upload the contents of the "codepkg" package, running all tests -->
+      <sf:deploy deployRoot="codepkg" logType="Debugonly" maxPoll="${sf.maxPoll}" password="${sf.password}" runAllTests="true" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+
+    <!-- Shows check only; never actually saves to the server -->
+    <target name="deployCodeCheckOnly">
+      <sf:deploy checkOnly="true" deployRoot="codepkg" maxPoll="${sf.maxPoll}" password="${sf.password}" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+
+                <!-- Retrieve the information of all items of a particular metadata type -->
+	<target name="listMetadata">
+      <sf:listMetadata metadataType="${sf.metadataType}" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/list.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+    <target name="CustomObject">
+      <sf:listMetadata metadataType="CustomObject" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CustomObject.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	 <target name="CustomObject1">
+      <sf:listMetadata metadataType="CustomObject" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata2/CustomObject.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="ApexClass">
+      <sf:listMetadata metadataType="ApexClass" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/ApexClass.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	<target name="ApexClass1">
+      <sf:listMetadata metadataType="ApexClass" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata2/ApexClass.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	 <target name="ApexPage">
+      <sf:listMetadata metadataType="ApexPage" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/ApexPage.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	 <target name="ApexPage1">
+      <sf:listMetadata metadataType="ApexPage" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata2/ApexPage.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	 <target name="ApexTrigger">
+      <sf:listMetadata metadataType="ApexTrigger" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/ApexTrigger.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	 <target name="ApexTrigger1">
+      <sf:listMetadata metadataType="ApexTrigger" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata2/ApexTrigger.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="AccountOwnerSharingRule">
+      <sf:listMetadata metadataType="AccountOwnerSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/AccountOwnerSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="AnalyticSnapshot">
+      <sf:listMetadata metadataType="AnalyticSnapshot" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/AnalyticSnapshot.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="ApexComponent">
+      <sf:listMetadata metadataType="ApexComponent" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/ApexComponent.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="AppMenu">
+      <sf:listMetadata metadataType="AppMenu" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/AppMenu.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="AssignmentRules">
+      <sf:listMetadata metadataType="AssignmentRules" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/AssignmentRules.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="AutoResponseRules">
+      <sf:listMetadata metadataType="AutoResponseRules" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/AutoResponseRules.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CampaignOwnerSharingRule">
+      <sf:listMetadata metadataType="CampaignOwnerSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CampaignOwnerSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CaseCriteriaBasedSharingRule">
+      <sf:listMetadata metadataType="CaseCriteriaBasedSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CaseCriteriaBasedSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CaseOwnerSharingRule">
+      <sf:listMetadata metadataType="CaseOwnerSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CaseOwnerSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Community">
+      <sf:listMetadata metadataType="Community" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Community.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="ContactOwnerSharingRule">
+      <sf:listMetadata metadataType="ContactOwnerSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/ContactOwnerSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CustomApplication">
+      <sf:listMetadata metadataType="CustomApplication" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CustomApplication.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	<target name="CustomApplication1">
+      <sf:listMetadata metadataType="CustomApplication" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata2/CustomApplication.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CustomLabels">
+      <sf:listMetadata metadataType="CustomLabels" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CustomLabels.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CustomObjectCriteriaBasedSharingRule">
+      <sf:listMetadata metadataType="CustomObjectCriteriaBasedSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CustomObjectCriteriaBasedSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CustomObjectOwnerSharingRule">
+      <sf:listMetadata metadataType="CustomObjectOwnerSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CustomObjectOwnerSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CustomPageWebLink">
+      <sf:listMetadata metadataType="CustomPageWebLink" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CustomPageWebLink.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CustomSite">
+      <sf:listMetadata metadataType="CustomSite" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CustomSite.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="CustomTab">
+      <sf:listMetadata metadataType="CustomTab" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/CustomTab.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	<target name="CustomTab1">
+      <sf:listMetadata metadataType="CustomTab" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata2/CustomTab.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Document">
+      <sf:listMetadata metadataType="DocumentFolder" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Document.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="EmailTemplate">
+      <sf:listMetadata metadataType="EmailFolder" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/EmailTemplate.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="EscalationRules">
+      <sf:listMetadata metadataType="EscalationRules" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/EscalationRules.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Group">
+      <sf:listMetadata metadataType="Group" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Group.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="HomePageLayout">
+      <sf:listMetadata metadataType="HomePageLayout" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/HomePageLayout.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Layout">
+      <sf:listMetadata metadataType="Layout" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Layout.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="LeadOwnerSharingRule">
+      <sf:listMetadata metadataType="LeadOwnerSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/LeadOwnerSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	<target name="Letterhead">
+      <sf:listMetadata metadataType="Letterhead" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Letterhead.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	<target name="Network">
+      <sf:listMetadata metadataType="Network" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Network.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="OpportunityCriteriaBasedSharingRule">
+      <sf:listMetadata metadataType="OpportunityCriteriaBasedSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/OpportunityCriteriaBasedSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="OpportunityOwnerSharingRule">
+      <sf:listMetadata metadataType="OpportunityOwnerSharingRule" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/OpportunityOwnerSharingRule.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Portal">
+      <sf:listMetadata metadataType="Portal" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Portal.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Queue">
+      <sf:listMetadata metadataType="Queue" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Queue.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="RemoteSiteSetting">
+      <sf:listMetadata metadataType="RemoteSiteSetting" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/RemoteSiteSetting.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="ReportType">
+      <sf:listMetadata metadataType="ReportType" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/ReportType.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Role">
+      <sf:listMetadata metadataType="Role" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Role.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Scontrol">
+      <sf:listMetadata metadataType="Scontrol" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Scontrol.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Settings">
+      <sf:listMetadata metadataType="Settings" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Settings.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="SiteDotCom">
+      <sf:listMetadata metadataType="SiteDotCom" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/SiteDotCom.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="StaticResource">
+      <sf:listMetadata metadataType="StaticResource" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/StaticResource.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="SynonymDictionary">
+      <sf:listMetadata metadataType="SynonymDictionary" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/SynonymDictionary.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Workflow">
+      <sf:listMetadata metadataType="Workflow" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Workflow.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="ApprovalProcess">
+      <sf:listMetadata metadataType="ApprovalProcess" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/ApprovalProcess.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Flow">
+      <sf:listMetadata metadataType="Flow" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Flow.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="QuickAction">
+      <sf:listMetadata metadataType="QuickAction" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/QuickAction.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="PermissionSet">
+      <sf:listMetadata metadataType="PermissionSet" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/PermissionSet.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="Profile">
+      <sf:listMetadata metadataType="Profile" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Profile.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="ConnectedApp">
+      <sf:listMetadata metadataType="ConnectedApp" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/ConnectedApp.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	
+	<target name="ConnectedApp1">
+      <sf:listMetadata metadataType="ConnectedApp" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata2/ConnectedApp.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	<target name="Dashboard">
+      <sf:listMetadata metadataType="DashboardFolder" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Dashboard.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	<target name="Report">
+      <sf:listMetadata metadataType="ReportFolder" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata/Report.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	<target name="DocumentFolder">
+  <sf:listMetadata folder="mkto2__Images" metadataType="Document" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata1/Document/mkto2__Images.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+</target>
+<target name="DashboardFolder">
+  <sf:listMetadata folder="GE_PRM_Dashboard" metadataType="Dashboard" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata1/Dashboard/list.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+</target>
+<target name="EmailTemplateFolder">
+  <sf:listMetadata folder="Pipelinemanagement" metadataType="EmailTemplate" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata1/EmailTemplate/Pipelinemanagement.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+</target>
+<target name="ReportFolder">
+  <sf:listMetadata folder="unfiled$public" metadataType="Report" password="${sf.password}" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata1/Report/list.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+</target>
+	
+	
+	<target name="PermissionSet1" >
+      <sf:listMetadata username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" metadataType="PermissionSet" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata2/PermissionSet.log"/>
+    </target>
+	
+	<target name="Profile1" >
+      <sf:listMetadata username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" metadataType="Profile" resultFilePath="D:/gegdc/PS70551/Tool/listMetadata2/Profile.log"/>
+    </target>
+	
+	
+
+                <!-- Retrieve the information on all supported metadata type -->
+    <target name="describeMetadata">
+      <sf:describeMetadata password="${sf.password}" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	 <target name="test">
+      <!-- Upload the contents of the "mypkg" package -->
+      <sf:deploy deployRoot="mypkg" maxPoll="${sf.maxPoll}" password="${sf.password}" serverurl="${sf.serverurl}" username="${sf.username}"/>
+      <mkdir dir="retrieveOutput"/>
+      <!-- Retrieve the contents into another directory -->
+      <sf:retrieve maxPoll="${sf.maxPoll}" packageNames="MyPkg" password="${sf.password}" retrieveTarget="retrieveOutput" serverurl="${sf.serverurl}" username="${sf.username}"/>
+    </target>
+	<target name="describeMetadata1"> 
+	<sf:describeMetadata password="${sf.password}" resultFilePath="describeMetadata/describe.log" serverurl="${sf.serverurl}" username="${sf.username}"/>
+	</target>
+	<target name="retrieveUnpackaged">
+  <mkdir dir="retrieveUnpackaged"/>
+  <!-- Retrieve the contents into another directory -->
+  <sf:retrieve password="${sf.password}" retrieveTarget="retrieveUnpackaged" serverurl="${sf.serverurl}" unpackaged="unpackaged/package.xml" username="${sf.username}"/>
+</target>
+<target name="deployCodeCheckOnly1">
+  <sf:deploy username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" maxPoll="500" runAllTests="true" checkOnly="true" deployRoot="codepkg"/>
+</target>
+	
+</project>
